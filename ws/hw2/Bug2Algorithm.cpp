@@ -12,7 +12,7 @@ Eigen::Vector2d Bug2Algorithm::turn_left (const Eigen::Vector2d& v){
     return {-v.y(),v.x()};}
 
 Bug2Algorithm::Bug2Algorithm() {
-    checker.collision_tol = 1e-20; // Make stricter tolerance for workspace 2 case where m-line and intermedaite edges are collinear
+    checker.collision_tol = 1e-10; // Make stricter tolerance for workspace 2 case where m-line and intermedaite edges are collinear
 }
 
 // ----- Algorithm functions ----- // 
@@ -90,20 +90,19 @@ std::pair<bool,bool> Bug2Algorithm::follow_boundary(
                 }
             }
         }
-        // ----------------------------------------------------------------
-
-        Eigen::Vector2d tryL = (turn_right(dir_to_goal)).normalized();
+        // If collision in m-line direction, move along obstacle
+        Eigen::Vector2d tryR = (turn_right(dir_to_goal)).normalized();
         Eigen::Vector2d tryF = (dir_to_goal).normalized();
-        Eigen::Vector2d tryR = (turn_left(dir_to_goal)).normalized();
+        Eigen::Vector2d tryL = (turn_left(dir_to_goal)).normalized();
         Eigen::Vector2d tryB = (-dir_to_goal).normalized();
 
-        Eigen::Vector2d chosen   = tryL;
-        Eigen::Vector2d next_pos = cur_pos + step_size * tryL;
+        Eigen::Vector2d chosen   = tryR;
+        Eigen::Vector2d next_pos = cur_pos + step_size * tryR;
 
         if (checker.collides(next_pos, prob.obstacles)) {
             next_pos = cur_pos + step_size * tryF; chosen = tryF;
             if (checker.collides(next_pos, prob.obstacles)) {
-                next_pos = cur_pos + step_size * tryR; chosen = tryR;
+                next_pos = cur_pos + step_size * tryL; chosen = tryL;
                 if (checker.collides(next_pos, prob.obstacles)) {
                     next_pos = cur_pos + step_size * tryB; chosen = tryB;
                 }
@@ -114,13 +113,13 @@ std::pair<bool,bool> Bug2Algorithm::follow_boundary(
         path.waypoints.push_back(next_pos);
         ++steps_since_hit;
 
-        // goal reached during following
+        // goal reached during following case
         if ((prob.q_goal - next_pos).norm() <= std::max(step_size, tol_goal)) {
             path.waypoints.push_back(prob.q_goal);
             return {true, false};
         }
 
-        // standard Bug-2 leave condition (on m-line and strictly beyond the hit)
+        // leave if on m-line and strictly beyond the hit
         auto [dist_to_mline, u_now] = distance_and_param_m_line(prob.q_init, prob.q_goal, next_pos);
         if (dist_to_mline <= mline_tol && (u_now > u_hit) && (u_now <= 1.0)) {
             return {false, false};

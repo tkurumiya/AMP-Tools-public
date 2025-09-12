@@ -11,7 +11,7 @@ public:
     // I tuned these parameters to account for numerical precision and to prevent overshooting of paths
     double step_size  = 0.01;  // finer step size means better precision
     double tol_goal   = 1e-6;   // tolerance of how close to goal
-    double mline_tol  = 1e-2;   // tolerance of how close to mline
+    double mline_tol  = 1e-4;   // tolerance of how close to mline
 
     amp::Path2D plan(const amp::Problem2D& problem) override;
     Bug2Algorithm();

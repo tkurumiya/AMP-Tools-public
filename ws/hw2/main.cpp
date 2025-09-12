@@ -50,7 +50,7 @@ int main(int argc, char** argv) {
         // Check your path to make sure that it does not collide with the environment 
         bool success = HW2::check(path, problem, collision_points);
 
-        LOG("Found valid solution to workspace 1: " << (success ? "Yes!" : "No :("));
+        LOG("Found valid solution to workspace 2: " << (success ? "Yes!" : "No :("));
 
         // Visualize the path and environment
         Visualizer::makeFigure(problem, path, collision_points);
@@ -77,7 +77,7 @@ int main(int argc, char** argv) {
     Visualizer::saveFigures(true, "hw2_figs");
 
 
-    HW2::grade(algo, "nonhuman.biologic@myspace.edu", argc, argv);
+    HW2::grade(algo, "tatsuyoshi.kurumiya@colorado.edu", argc, argv);
     
     /* If you want to reconstruct your bug algorithm object every trial (to reset member variables from scratch or initialize), use this method instead*/
     //HW2::grade<MyBugAlgorithm>("nonhuman.biologic@myspace.edu", argc, argv, constructor_parameter_1, constructor_parameter_2, etc...);
