@@ -5,7 +5,8 @@
 #include "hw/HW2.h"
 
 // Include any custom headers you created in your workspace
-#include "MyBugAlgorithm.h"
+#include "Bug1Algorithm.h"
+#include "Bug2Algorithm.h"
 
 using namespace amp;
 
@@ -16,7 +17,7 @@ int main(int argc, char** argv) {
     /*    Randomly generate the problem     */ 
 
     // Use WO1 from Exercise 2
-    Problem2D problem = HW2::getWorkspace1();
+    Problem2D problem = HW2::getWorkspace2();
 
     // Use WO1 from Exercise 2
     /*
@@ -36,19 +37,27 @@ int main(int argc, char** argv) {
     */
 
     // Declare your algorithm object 
-    MyBugAlgorithm algo;
+    // Switch between 1 or 2
+    Bug2Algorithm algo;
     
     {
         // Call your algorithm on the problem
         amp::Path2D path = algo.plan(problem);
+        LOG("Path length: " << path.length());
+
+        std::vector<Eigen::Vector2d> collision_points;
 
         // Check your path to make sure that it does not collide with the environment 
-        bool success = HW2::check(path, problem);
+        bool success = HW2::check(path, problem, collision_points);
 
         LOG("Found valid solution to workspace 1: " << (success ? "Yes!" : "No :("));
 
         // Visualize the path and environment
-        Visualizer::makeFigure(problem, path);
+        Visualizer::makeFigure(problem, path, collision_points);
+        // for (int i=0; i< collision_points.size();i++)
+        // {
+        //     LOG(" FOUND COLLISION POINTS : " << collision_points[i]);
+        // }
     }
 
     // Let's get crazy and generate a random environment and test your algorithm
